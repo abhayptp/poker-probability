@@ -28,7 +28,7 @@ type Card struct {
 	suit Suit
 }
 
-func NewCard(rank string, suit rune) *Card {
+func NewCard(rank Rank, suit Suit) *Card {
 	c := &Card{
 		rank: Rank(rank),
 		suit: Suit(suit),

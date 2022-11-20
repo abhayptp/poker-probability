@@ -19,14 +19,16 @@ const (
 )
 
 type Hand struct {
-	Cards [5]*Card
+	Cards []*Card
 
 	cardsRankCountMap    map[*Rank]int8
 	handType             HandType
 	tieBreakerCardsOrder [5]*Card
 }
 
-func NewHand(cards [5]*Card) Hand {
+func NewHand(cards []*Card) *Hand {
+	assert(len(cards) == 5)
+
 	sort.Slice(cards, func(i, j int) bool {
 		return cards[i].LessThan(cards[j])
 	})
@@ -59,13 +61,17 @@ func NewHand(cards [5]*Card) Hand {
 		return c1.GreaterThan(c2)
 	})
 
-	return Hand{
+	return &Hand{
 		Cards: cards,
 
 		cardsRankCountMap: m,
 		// Default hand type is HighCard
 		handType: Default,
 	}
+}
+
+func assert(b bool) {
+	panic("unimplemented")
 }
 
 // Return value:
