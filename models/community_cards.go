@@ -1,10 +1,13 @@
 package models
 
+var _ CommunityCards = &communityCards{}
+
 type CommunityCards interface {
+	Clone() CommunityCards
+	GetAllCards() []Card
 	GetOpenedCards() []Card
 	GetUnopenedCards() []Card
 	SetUnopenedCards(cards []Card)
-	GetAllCards() []Card
 }
 
 type communityCards struct {
@@ -19,6 +22,15 @@ func NewCommunityCards(cards ...Card) *communityCards {
 	}
 }
 
+func (c *communityCards) Clone() CommunityCards {
+	clone := *c
+	return &clone
+}
+
+func (c *communityCards) GetAllCards() []Card {
+	return append(c.openedCards, c.unopenedCards...)
+}
+
 func (c *communityCards) GetOpenedCards() []Card {
 	return c.openedCards
 }
@@ -29,8 +41,4 @@ func (c *communityCards) GetUnopenedCards() []Card {
 
 func (c *communityCards) SetUnopenedCards(cards []Card) {
 	c.unopenedCards = cards
-}
-
-func (c *communityCards) GetAllCards() []Card {
-	return append(c.openedCards, c.unopenedCards...)
 }

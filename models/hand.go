@@ -1,6 +1,8 @@
 package models
 
-import "sort"
+import (
+	"sort"
+)
 
 type HandType int
 
@@ -18,19 +20,22 @@ const (
 	Default
 )
 
+var _ Hand = &hand{}
+
 type Hand interface {
 	Compare(Hand) int
-	SetHandType()
 	GetHandType() HandType
-	GetTieBreakerCardsOrder() [5]Card
+	GetTieBreakerCardsOrder() []Card
+	SetHandType()
+	String() string
 }
 
 type hand struct {
-	Cards []Card
+	cards []Card
 
-	cardsRankCountMap    map[*Rank]int8
+	cardsRankCountMap    map[Rank]int8
 	handType             HandType
-	tieBreakerCardsOrder [5]Card
+	tieBreakerCardsOrder []Card
 }
 
 func NewHand(cards []Card) *hand {
@@ -42,15 +47,14 @@ func NewHand(cards []Card) *hand {
 		return cards[i].LessThan(cards[j])
 	})
 
-	// Setting cardsRankCountMap
-	var m map[*Rank]int8
+	m := make(map[Rank]int8)
 
 	for _, card := range cards {
 		m[card.GetRank()] += 1
 	}
 
-	// Setting tieBreakerCardsOrder
-	tieBreakerCardsOrder := cards
+	tieBreakerCardsOrder := make([]Card, 5)
+	_ = copy(tieBreakerCardsOrder, cards)
 	sort.Slice(tieBreakerCardsOrder, func(i, j int) bool {
 		c1 := tieBreakerCardsOrder[i]
 		c2 := tieBreakerCardsOrder[j]
@@ -71,9 +75,10 @@ func NewHand(cards []Card) *hand {
 	})
 
 	return &hand{
-		Cards: cards,
+		cards: cards,
 
-		cardsRankCountMap: m,
+		cardsRankCountMap:    m,
+		tieBreakerCardsOrder: tieBreakerCardsOrder,
 		// Default hand type is HighCard
 		handType: Default,
 	}
@@ -88,11 +93,11 @@ func (h1 *hand) Compare(h2 Hand) int {
 		panic("hand type not set")
 	}
 
-	if h1.handType > h2.GetHandType() {
+	if h1.handType < h2.GetHandType() {
 		return 1
 	}
 
-	if h1.handType < h2.GetHandType() {
+	if h1.handType > h2.GetHandType() {
 		return -1
 	}
 
@@ -138,12 +143,24 @@ func (h *hand) GetHandType() HandType {
 	return h.handType
 }
 
-func (h *hand) GetTieBreakerCardsOrder() [5]Card {
+func (h *hand) GetTieBreakerCardsOrder() []Card {
 	return h.tieBreakerCardsOrder
 }
 
+func (h *hand) String() string {
+	st := ""
+	len := len(h.cards)
+	for i, card := range h.cards {
+		st += card.String()
+		if i != len-1 {
+			st += ","
+		}
+	}
+	return st
+}
+
 func (h *hand) royalFlush() bool {
-	if *h.Cards[0].GetRank() != "10" {
+	if h.cards[0].GetRank() != "10" {
 		return false
 	}
 
@@ -156,13 +173,13 @@ func (h *hand) royalFlush() bool {
 }
 
 func (h *hand) straightFlush() bool {
-	firstCard := h.Cards[0]
+	firstCard := h.cards[0]
 
-	for i, card := range h.Cards {
-		if *card.GetSuit() != *firstCard.GetSuit() {
+	for i, card := range h.cards {
+		if card.GetSuit() != firstCard.GetSuit() {
 			return false
 		}
-		if rankOrder[*card.GetRank()] != rankOrder[*firstCard.GetRank()]+i {
+		if rankOrder[card.GetRank()] != rankOrder[firstCard.GetRank()]+i {
 			return false
 		}
 	}
@@ -195,26 +212,33 @@ func (h *hand) fullHouse() bool {
 		}
 	}
 
-	return cnt == 2
+	if cnt == 2 {
+		h.handType = FullHouse
+		return true
+	}
+
+	return false
 }
 
 func (h *hand) flush() bool {
-	for _, card := range h.Cards {
-		if !card.EqualsSuit(h.Cards[0]) {
+	for _, card := range h.cards {
+		if !card.EqualsSuit(h.cards[0]) {
 			return false
 		}
 	}
 
+	h.handType = Flush
 	return true
 }
 
 func (h *hand) straight() bool {
-	for i, card := range h.Cards {
-		if card.RankDifference(h.Cards[0]) != i {
+	for i, card := range h.cards {
+		if card.RankDifference(h.cards[0]) != i {
 			return false
 		}
 	}
 
+	h.handType = Straight
 	return true
 
 }
@@ -222,6 +246,7 @@ func (h *hand) straight() bool {
 func (h *hand) threeOfAKind() bool {
 	for _, v := range h.cardsRankCountMap {
 		if v == 3 {
+			h.handType = ThreeOfAKind
 			return true
 		}
 	}
@@ -237,12 +262,18 @@ func (h *hand) twoPairs() bool {
 		}
 	}
 
-	return cnt == 2
+	if cnt == 2 {
+		h.handType = TwoPairs
+		return true
+	}
+
+	return false
 }
 
 func (h *hand) pair() bool {
 	for _, v := range h.cardsRankCountMap {
 		if v == 2 {
+			h.handType = Pair
 			return true
 		}
 	}
@@ -251,5 +282,6 @@ func (h *hand) pair() bool {
 }
 
 func (h *hand) highCard() bool {
+	h.handType = HighCard
 	return true
 }
