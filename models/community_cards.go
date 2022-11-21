@@ -1,29 +1,36 @@
 package models
 
-type CommunityCards struct {
-	openedCards   []*Card
-	unopenedCards []*Card
+type CommunityCards interface {
+	GetOpenedCards() []Card
+	GetUnopenedCards() []Card
+	SetUnopenedCards(cards []Card)
+	GetAllCards() []Card
 }
 
-func NewCommunityCards(cards ...*Card) CommunityCards {
+type communityCards struct {
+	openedCards   []Card
+	unopenedCards []Card
+}
 
-	return CommunityCards{
+func NewCommunityCards(cards ...Card) *communityCards {
+
+	return &communityCards{
 		openedCards: cards,
 	}
 }
 
-func (c CommunityCards) GetOpenedCards() []*Card {
+func (c *communityCards) GetOpenedCards() []Card {
 	return c.openedCards
 }
 
-func (c CommunityCards) GetOpenedCardsCount() int {
-	return len(c.openedCards)
+func (c *communityCards) GetUnopenedCards() []Card {
+	return c.unopenedCards
 }
 
-func (c CommunityCards) SetUnopenedCards(cards []*Card) {
+func (c *communityCards) SetUnopenedCards(cards []Card) {
 	c.unopenedCards = cards
 }
 
-func (c CommunityCards) GetAllCards() []*Card {
+func (c *communityCards) GetAllCards() []Card {
 	return append(c.openedCards, c.unopenedCards...)
 }

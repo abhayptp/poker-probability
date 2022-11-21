@@ -1,12 +1,19 @@
 package models
 
-type DealtCards struct {
-	playerName string
-	cards      []*Card
+type DealtCards interface {
+	GetCards() []Card
+	SetUnknownDealtCards(...Card)
 }
 
-func NewDealtCards(c ...*Card) DealtCards {
-	assert(len(c) <= 2)
+type dealtCards struct {
+	playerName string
+	cards      []Card
+}
+
+func NewDealtCards(c ...Card) *dealtCards {
+	if len(c) > 2 {
+		panic("known dealt cards can not be greater than 2")
+	}
 
 	if c[0] != nil && c[1] != nil {
 		if c[0].LessThan(c[1]) {
@@ -14,16 +21,19 @@ func NewDealtCards(c ...*Card) DealtCards {
 		}
 	}
 
-	return DealtCards{
+	return &dealtCards{
 		cards: c,
 	}
 }
 
-func (d DealtCards) GetCards() []*Card {
+func (d *dealtCards) GetCards() []Card {
 	return d.cards[:]
 }
 
-func (d DealtCards) SetUnknownDealtCards(c ...*Card) {
-	assert(len(c)+len(d.cards) == 2)
+func (d *dealtCards) SetUnknownDealtCards(c ...Card) {
+	if len(c)+len(d.cards) != 2 {
+		panic("total dealt cards should be 2")
+	}
+
 	d.cards = append(d.cards, c...)
 }

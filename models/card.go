@@ -23,13 +23,26 @@ var rankOrder = map[Rank]int{
 
 var suitValues = [4]Suit{'S', 'H', 'D', 'C'}
 
-type Card struct {
+type Card interface {
+	GetRank() *Rank
+	GetSuit() *Suit
+	Valid() bool
+	LessThan(Card) bool
+	GreaterThan(Card) bool
+	Equals(Card) bool
+	EqualsSuit(Card) bool
+	EqualsRank(Card) bool
+	RankDifference(Card) int
+	EqualsString(string) bool
+}
+
+type card struct {
 	rank Rank
 	suit Suit
 }
 
-func NewCard(rank Rank, suit Suit) *Card {
-	c := &Card{
+func NewCard(rank Rank, suit Suit) *card {
+	c := &card{
 		rank: Rank(rank),
 		suit: Suit(suit),
 	}
@@ -41,15 +54,15 @@ func NewCard(rank Rank, suit Suit) *Card {
 	return c
 }
 
-func (card *Card) GetRank() *Rank {
+func (card *card) GetRank() *Rank {
 	return &card.rank
 }
 
-func (card *Card) GetSuit() *Suit {
+func (card *card) GetSuit() *Suit {
 	return &card.suit
 }
 
-func (card *Card) Valid() bool {
+func (card *card) Valid() bool {
 	if card == nil {
 		return false
 	}
@@ -67,23 +80,15 @@ func (card *Card) Valid() bool {
 	return false
 }
 
-func (card1 *Card) LessThan(card2 *Card) bool {
-	if rankOrder[card1.rank] < rankOrder[card2.rank] {
-		return true
-	}
-
-	return false
+func (card1 *card) LessThan(card2 Card) bool {
+	return rankOrder[card1.rank] < rankOrder[*card2.GetRank()]
 }
 
-func (card1 *Card) GreaterThan(card2 *Card) bool {
-	if rankOrder[card1.rank] > rankOrder[card2.rank] {
-		return true
-	}
-
-	return false
+func (card1 *card) GreaterThan(card2 Card) bool {
+	return rankOrder[card1.rank] > rankOrder[*card2.GetRank()]
 }
 
-func (card1 *Card) Equals(card2 *Card) bool {
+func (card1 *card) Equals(card2 Card) bool {
 	if card1.EqualsSuit(card2) && card1.EqualsRank(card2) {
 		return true
 	}
@@ -91,28 +96,19 @@ func (card1 *Card) Equals(card2 *Card) bool {
 	return false
 }
 
-func (card1 *Card) EqualsSuit(card2 *Card) bool {
-	if card1.suit == card2.suit {
-		return true
-	}
-
-	return false
+func (card1 *card) EqualsSuit(card2 Card) bool {
+	return card1.suit == *card2.GetSuit()
 }
 
-func (card1 *Card) EqualsRank(card2 *Card) bool {
-	if card1.rank == card1.rank {
-		return true
-	}
-
-	return false
+func (card1 *card) EqualsRank(card2 Card) bool {
+	return card1.rank == *card2.GetRank()
 }
 
-func (card1 *Card) RankDifference(card2 *Card) int {
-	return rankOrder[card1.rank] - rankOrder[card2.rank]
-
+func (card1 *card) RankDifference(card2 Card) int {
+	return rankOrder[card1.rank] - rankOrder[*card2.GetRank()]
 }
 
-func (card *Card) EqualsString(c string) bool {
+func (card *card) EqualsString(c string) bool {
 	suit := c[len(c)-1]
 	rank := c[:len(c)-1]
 

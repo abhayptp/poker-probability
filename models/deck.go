@@ -5,14 +5,21 @@ import (
 	"time"
 )
 
-type Deck struct {
-	cards []*Card
+type Deck interface {
+	RemoveCards([]Card)
+	AddCards([]Card)
+	Burn()
+	GetCardsFromTop(int) []Card
 }
 
-func NewDeck() Deck {
-	c := make([]*Card, 0, 52)
+type deck struct {
+	cards []Card
+}
 
-	for rank, _ := range rankOrder {
+func NewDeck() *deck {
+	c := make([]Card, 0, 52)
+
+	for rank := range rankOrder {
 		for _, suit := range suitValues {
 			c = append(c, NewCard(rank, suit))
 		}
@@ -23,12 +30,12 @@ func NewDeck() Deck {
 		c[i], c[j] = c[j], c[i]
 	})
 
-	return Deck{
+	return &deck{
 		cards: c,
 	}
 }
 
-func (d Deck) RemoveCards(cards []*Card) {
+func (d *deck) RemoveCards(cards []Card) {
 	for _, card := range cards {
 		for j, dCard := range d.cards {
 			if card.Equals(dCard) {
@@ -39,15 +46,15 @@ func (d Deck) RemoveCards(cards []*Card) {
 	}
 }
 
-func (d Deck) AddCards(cards []*Card) {
+func (d *deck) AddCards(cards []Card) {
 	d.cards = append(d.cards, cards...)
 }
 
-func (d Deck) Burn() {
+func (d *deck) Burn() {
 	d.cards = append(d.cards[1:], d.cards[0])
 }
 
-func (d Deck) GetCardsFromTop(count int) []*Card {
+func (d *deck) GetCardsFromTop(count int) []Card {
 	cards := d.cards[:count]
 	d.cards = d.cards[count:]
 	return cards

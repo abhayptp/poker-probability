@@ -57,10 +57,10 @@ func (a ApproximateStrategy) simulateGame(communityCards models.CommunityCards,
 		}
 		deck.RemoveCards(communityCards.GetOpenedCards())
 
-		cards := deck.GetCardsFromTop(5 - communityCards.GetOpenedCardsCount())
+		cards := deck.GetCardsFromTop(5 - len(communityCards.GetOpenedCards()))
 		communityCards.SetUnopenedCards(cards)
 
-		var playerHands []*models.Hand
+		var playerHands []models.Hand
 
 		for i := 0; i < playersCount; i++ {
 			cnt := 2 - len(playerCards[i].GetCards())
@@ -70,7 +70,7 @@ func (a ApproximateStrategy) simulateGame(communityCards models.CommunityCards,
 			sevenCards := append(playerCards[i].GetCards(), communityCards.GetAllCards()...)
 
 			// Generate all possible hands with 7 cards
-			possibleHands := make([]*models.Hand, 0, 21)
+			possibleHands := make([]models.Hand, 0, 21)
 			for i := 0; i < 7; i++ {
 				for j := i + 1; j < 7; j++ {
 					hand := models.NewHand(
