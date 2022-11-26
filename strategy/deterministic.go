@@ -1,8 +1,8 @@
 package strategy
 
-type DeterministicStrategy struct {
+type Deterministic struct {
 }
 
-func (d DeterministicStrategy) Run() Result {
+func (d Deterministic) Run() Result {
 	panic("Not implemented")
 }

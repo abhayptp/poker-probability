@@ -34,3 +34,17 @@ func (d *dealtCards) GetCards() []Card {
 func (d *dealtCards) SetUnknownDealtCards(c ...Card) {
 	d.cards = append(d.cards, c...)
 }
+
+func (d *dealtCards) String() string {
+	if len(d.cards) == 0 {
+		return "na"
+	}
+	res := ""
+	for i, v := range d.cards {
+		res += v.String()
+		if i != len(d.cards)-1 {
+			res += ","
+		}
+	}
+	return res
+}

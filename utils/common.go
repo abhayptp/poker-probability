@@ -33,6 +33,24 @@ func CreateCardsList(c string) []models.Card {
 	return playerCards
 }
 
+func CreateCardsListOrError(c string) ([]models.Card, error) {
+	if len(c) == 0 {
+		return []models.Card{}, nil
+	}
+	playersCardStr := strings.Split(c, ",")
+	playerCards := make([]models.Card, 0)
+	for _, c := range playersCardStr {
+		suit := c[len(c)-1]
+		rank := c[:len(c)-1]
+		card, err := models.NewCard(models.Rank(rank), models.Suit(suit))
+		if err != nil {
+			return nil, err
+		}
+		playerCards = append(playerCards, card)
+	}
+	return playerCards, nil
+}
+
 func GetBestHand(hands []models.Hand) models.Hand {
 	bestHand := hands[0]
 

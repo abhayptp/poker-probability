@@ -2,13 +2,13 @@ package strategy
 
 import (
 	"sync"
-	"sync/atomic"
 
 	"github.com/abhayptp/poker-probability/models"
 	"github.com/abhayptp/poker-probability/utils"
 )
 
-type ApproximateStrategy struct {
+type Approximate struct {
+	sync.Mutex
 	communityCards models.CommunityCards
 	playerCards    []models.DealtCards
 
@@ -17,11 +17,26 @@ type ApproximateStrategy struct {
 	concurrency      int
 }
 
-func (a ApproximateStrategy) Run() Result {
+func NewApproximate(communityCards models.CommunityCards,
+	playerCards []models.DealtCards,
+	playersCount int,
+	simulationRounds int,
+	concurrency int) *Approximate {
+	return &Approximate{
+		communityCards:   communityCards,
+		playerCards:      playerCards,
+		playersCount:     playersCount,
+		simulationRounds: simulationRounds,
+		concurrency:      concurrency,
+	}
+}
+
+func (a *Approximate) Run() Result {
 	wg := new(sync.WaitGroup)
 	wg.Add(a.concurrency)
 
-	var winCount, drawCount int64 = 0, 0
+	winCount := make([]int64, a.playersCount)
+	drawCount := make([]int64, a.playersCount)
 
 	for i := 0; i < a.concurrency; i++ {
 		go func() {
@@ -33,28 +48,46 @@ func (a ApproximateStrategy) Run() Result {
 			}
 
 			wins, draws := a.simulateGame(a.communityCards.Clone(), playerCardsCopy, a.playersCount, a.simulationRounds)
-			atomic.AddInt64(&winCount, wins)
-			atomic.AddInt64(&drawCount, draws)
+			a.Lock()
+			for i, v := range wins {
+				winCount[i] += v
+			}
+			for i, v := range draws {
+				drawCount[i] += v
+			}
+			a.Unlock()
 		}()
 	}
 
 	wg.Wait()
 
-	winProbability := float64(winCount*1.0) / float64(a.concurrency*a.simulationRounds)
-	tieProbability := float64(drawCount*1.0) / float64(a.concurrency*a.simulationRounds)
+	pRes := make([]PlayerResult, a.playersCount)
+
+	for i := 0; i < a.playersCount; i++ {
+		var pCards models.DealtCards
+		if i < len(a.playerCards) {
+			pCards = a.playerCards[i]
+		} else {
+			pCards = models.NewDealtCards()
+		}
+		pRes[i] = PlayerResult{
+			Cards:          pCards,
+			WinProbability: float64(winCount[i]) / float64(a.concurrency*a.simulationRounds),
+			TieProbability: float64(drawCount[i]) / float64(a.concurrency*a.simulationRounds),
+		}
+	}
 
 	return Result{
-		winProbability: winProbability,
-		tieProbability: tieProbability,
+		PlayerResult: pRes,
 	}
 }
 
-func (a ApproximateStrategy) simulateGame(communityCards models.CommunityCards,
+func (a *Approximate) simulateGame(communityCards models.CommunityCards,
 	playerCards []models.DealtCards,
 	playersCount int,
-	simulationRounds int) (int64, int64) {
-	var winCount int64
-	var drawCount int64
+	simulationRounds int) ([]int64, []int64) {
+	winCount := make([]int64, playersCount)
+	drawCount := make([]int64, playersCount)
 	for round := 0; round < simulationRounds; round++ {
 		deck := models.NewDeck()
 		for _, dealtCards := range playerCards {
@@ -95,20 +128,18 @@ func (a ApproximateStrategy) simulateGame(communityCards models.CommunityCards,
 		}
 
 		ranks := utils.RankHands(playerHands)
-		win, draw := false, false
-		if ranks[0] == 0 {
-			win = true
-			for i := 1; i < playersCount; i++ {
-				if ranks[i] == 0 {
-					draw = true
-				}
+		winners := make([]int, 0)
+		for i, v := range ranks {
+			if v == 0 {
+				winners = append(winners, i)
 			}
 		}
-		if win && !draw {
-			winCount += 1
-		}
-		if draw {
-			drawCount += 1
+		if len(winners) == 1 {
+			winCount[winners[0]] += 1
+		} else {
+			for _, w := range winners {
+				drawCount[w] += 1
+			}
 		}
 	}
 	return winCount, drawCount
