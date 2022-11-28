@@ -1,4 +1,4 @@
-# Poker Probability Calculator
+# Poker Probability
 
 [![Actions Status](https://github.com/abhayptp/poker-probability/actions/workflows/go.yml/badge.svg)](https://github.com/abhayptp/poker-probability/actions)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
