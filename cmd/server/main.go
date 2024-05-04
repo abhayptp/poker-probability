@@ -61,6 +61,9 @@ func getProbabilityHandler(w http.ResponseWriter, r *http.Request) {
 
 	var request GetProbabilityRequest
 	err := decoder.Decode(&request)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
 
 	pCards := make([]models.DealtCards, 0)
 
