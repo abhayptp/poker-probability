@@ -58,33 +58,36 @@ type GetProbabilityResponse struct {
 
 func getProbabilityHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
+	// Log the request
+	log.Printf("Received request: %s %s", r.Method, r.URL.Path)
 
 	var request GetProbabilityRequest
 	err := decoder.Decode(&request)
 	if err != nil {
+		log.Printf("Error decoding request: %s", err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
-	pCards := make([]models.DealtCards, 0)
+	// Log the decoded request
+	log.Printf("Decoded request: %+v", request)
 
+	pCards := make([]models.DealtCards, 0)
 	for _, playerCards := range request.PlayerCards {
 		cardList := AdaptToModelsCardList(playerCards.Cards)
 		pCards = append(pCards, models.NewDealtCards(cardList...))
 	}
-
 	cardList := AdaptToModelsCardList(request.CommunityCards.Cards)
 	if err != nil {
+		log.Printf("Error adapting card list: %s", err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	cCards := models.NewCommunityCards(cardList...)
-
 	strategy := strategy.NewApproximate(
 		cCards, pCards, request.PlayersCount, request.SimulationRounds, 5,
 	)
-
 	strategyRes := strategy.Run()
-
 	playerResults := make([]PlayerResult, request.PlayersCount)
 	for i, result := range strategyRes.PlayerResult {
 		playerResults[i] = PlayerResult{
@@ -93,14 +96,20 @@ func getProbabilityHandler(w http.ResponseWriter, r *http.Request) {
 			TieProbability: result.TieProbability,
 		}
 	}
+
+	// Log the player results
+	log.Printf("Player results: %+v", playerResults)
+
 	response := GetProbabilityResponse{
 		PlayerResults: playerResults,
 	}
 	jsonResponse, err := json.Marshal(response)
 	if err != nil {
+		log.Printf("Error marshaling response: %s", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonResponse)
 }
