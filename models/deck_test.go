@@ -108,23 +108,23 @@ func Test_deck_PopCardsFromTop(t *testing.T) {
 				cards: []Card{
 					&card{
 						rank: "1",
-						suit: 'S',
+						suit: "S",
 					},
 					&card{
 						rank: "2",
-						suit: 'S',
+						suit: "S",
 					},
 					&card{
 						rank: "3",
-						suit: 'H',
+						suit: "H",
 					},
 					&card{
 						rank: "4",
-						suit: 'S',
+						suit: "S",
 					},
 					&card{
 						rank: "10",
-						suit: 'C',
+						suit: "C",
 					},
 				},
 			},
@@ -134,11 +134,11 @@ func Test_deck_PopCardsFromTop(t *testing.T) {
 			want: []Card{
 				&card{
 					rank: "1",
-					suit: 'S',
+					suit: "S",
 				},
 				&card{
 					rank: "2",
-					suit: 'S',
+					suit: "S",
 				},
 			},
 		},

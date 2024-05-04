@@ -43,14 +43,14 @@ func TestCreateCard(t *testing.T) {
 				c: "10H",
 			},
 			wantRank: "10",
-			wantSuit: 'H',
+			wantSuit: "H",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := CreateCard(tt.args.c)
 			if got.GetSuit() != tt.wantSuit {
-				t.Errorf("Suit = %c, want %c", got.GetSuit(), tt.wantSuit)
+				t.Errorf("Suit = %s, want %s", got.GetSuit(), tt.wantSuit)
 			}
 			if got.GetRank() != tt.wantRank {
 				t.Errorf("Rank = %s, want %s", got.GetRank(), tt.wantRank)
@@ -79,7 +79,7 @@ func TestCreateCardsList(t *testing.T) {
 				models.Rank("10"), models.Rank("1"), models.Rank("A"),
 			},
 			wantSuits: []models.Suit{
-				models.Suit('D'), models.Suit('C'), models.Suit('H'),
+				models.Suit("D"), models.Suit("C"), models.Suit("H"),
 			},
 		},
 	}
@@ -91,7 +91,7 @@ func TestCreateCardsList(t *testing.T) {
 					t.Errorf("%d card rank = %s, want %s", i+1, card.GetRank(), tt.wantRanks[i])
 				}
 				if card.GetSuit() != tt.wantSuits[i] {
-					t.Errorf("%d card rank = %c, want %c", i+1, card.GetSuit(), tt.wantSuits[i])
+					t.Errorf("%d card rank = %s, want %s", i+1, card.GetSuit(), tt.wantSuits[i])
 				}
 			}
 		})

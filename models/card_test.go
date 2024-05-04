@@ -20,11 +20,11 @@ func TestNewCard(t *testing.T) {
 			name: "no error",
 			args: args{
 				rank: Rank("10"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
 			want: &card{
 				rank: "10",
-				suit: 'C',
+				suit: "C",
 			},
 			wantErr: false,
 		},
@@ -32,7 +32,7 @@ func TestNewCard(t *testing.T) {
 			name: "error",
 			args: args{
 				rank: Rank("11"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
 			want:    nil,
 			wantErr: true,
@@ -66,7 +66,7 @@ func Test_card_GetRank(t *testing.T) {
 			name: "10C should return 10 rank",
 			fields: fields{
 				rank: Rank("10"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
 			want: Rank("10"),
 		},
@@ -95,12 +95,12 @@ func Test_card_GetSuit(t *testing.T) {
 		want   Suit
 	}{
 		{
-			name: "10C should return 'C' suit",
+			name: "10C should return C suit",
 			fields: fields{
 				rank: Rank("10"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
-			want: Suit('C'),
+			want: Suit("C"),
 		},
 	}
 	for _, tt := range tests {
@@ -130,7 +130,7 @@ func Test_card_Valid(t *testing.T) {
 			name: "rank not valid",
 			fields: fields{
 				rank: Rank("11"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
 			want: false,
 		},
@@ -138,7 +138,7 @@ func Test_card_Valid(t *testing.T) {
 			name: "suit not valid",
 			fields: fields{
 				rank: Rank("1"),
-				suit: Suit('A'),
+				suit: Suit("A"),
 			},
 			want: false,
 		},
@@ -146,7 +146,7 @@ func Test_card_Valid(t *testing.T) {
 			name: "valid",
 			fields: fields{
 				rank: Rank("10"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
 			want: true,
 		},
@@ -182,12 +182,12 @@ func Test_card_LessThan(t *testing.T) {
 			name: "1S should be less than JD",
 			fields: fields{
 				rank: Rank("1"),
-				suit: Suit('S'),
+				suit: Suit("S"),
 			},
 			args: args{
 				card2: &card{
 					rank: "J",
-					suit: 'D',
+					suit: "D",
 				},
 			},
 			want: true,
@@ -196,12 +196,12 @@ func Test_card_LessThan(t *testing.T) {
 			name: "AH should not be less than 10C",
 			fields: fields{
 				rank: Rank("A"),
-				suit: Suit('H'),
+				suit: Suit("H"),
 			},
 			args: args{
 				card2: &card{
 					rank: "10",
-					suit: 'C',
+					suit: "C",
 				},
 			},
 			want: false,
@@ -210,12 +210,12 @@ func Test_card_LessThan(t *testing.T) {
 			name: "10C should not be less than 10H",
 			fields: fields{
 				rank: Rank("10"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
 			args: args{
 				card2: &card{
 					rank: "10",
-					suit: 'H',
+					suit: "H",
 				},
 			},
 			want: false,
@@ -252,12 +252,12 @@ func Test_card_GreaterThan(t *testing.T) {
 			name: "JD should be greater than 1S",
 			fields: fields{
 				rank: Rank("J"),
-				suit: Suit('D'),
+				suit: Suit("D"),
 			},
 			args: args{
 				card2: &card{
 					rank: "1",
-					suit: 'S',
+					suit: "S",
 				},
 			},
 			want: true,
@@ -266,12 +266,12 @@ func Test_card_GreaterThan(t *testing.T) {
 			name: "10C should not be greater than AH",
 			fields: fields{
 				rank: Rank("10"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
 			args: args{
 				card2: &card{
 					rank: "A",
-					suit: 'H',
+					suit: "H",
 				},
 			},
 			want: false,
@@ -280,12 +280,12 @@ func Test_card_GreaterThan(t *testing.T) {
 			name: "10C should not be greater than 10H",
 			fields: fields{
 				rank: Rank("10"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
 			args: args{
 				card2: &card{
 					rank: "10",
-					suit: 'H',
+					suit: "H",
 				},
 			},
 			want: false,
@@ -322,12 +322,12 @@ func Test_card_Equals(t *testing.T) {
 			name: "10C should not be equal to 10H",
 			fields: fields{
 				rank: Rank("10"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
 			args: args{
 				card2: &card{
 					rank: "10",
-					suit: 'H',
+					suit: "H",
 				},
 			},
 			want: false,
@@ -336,12 +336,12 @@ func Test_card_Equals(t *testing.T) {
 			name: "1C should not be equal to 10C",
 			fields: fields{
 				rank: Rank("1"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
 			args: args{
 				card2: &card{
 					rank: "10",
-					suit: 'C',
+					suit: "C",
 				},
 			},
 			want: false,
@@ -350,12 +350,12 @@ func Test_card_Equals(t *testing.T) {
 			name: "10C should be equal to 10C",
 			fields: fields{
 				rank: Rank("10"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
 			args: args{
 				card2: &card{
 					rank: "10",
-					suit: 'C',
+					suit: "C",
 				},
 			},
 			want: true,
@@ -392,12 +392,12 @@ func Test_card_EqualsSuit(t *testing.T) {
 			name: "10C should not be equal to 10H",
 			fields: fields{
 				rank: Rank("10"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
 			args: args{
 				card2: &card{
 					rank: "10",
-					suit: 'H',
+					suit: "H",
 				},
 			},
 			want: false,
@@ -406,12 +406,12 @@ func Test_card_EqualsSuit(t *testing.T) {
 			name: "1C should be equal to 10C",
 			fields: fields{
 				rank: Rank("1"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
 			args: args{
 				card2: &card{
 					rank: "1",
-					suit: 'C',
+					suit: "C",
 				},
 			},
 			want: true,
@@ -448,12 +448,12 @@ func Test_card_EqualsRank(t *testing.T) {
 			name: "10C should not be equal to 10H",
 			fields: fields{
 				rank: Rank("10"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
 			args: args{
 				card2: &card{
 					rank: "10",
-					suit: 'H',
+					suit: "H",
 				},
 			},
 			want: true,
@@ -462,12 +462,12 @@ func Test_card_EqualsRank(t *testing.T) {
 			name: "1C should be equal to 10C",
 			fields: fields{
 				rank: Rank("1"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
 			args: args{
 				card2: &card{
 					rank: "10",
-					suit: 'C',
+					suit: "C",
 				},
 			},
 			want: false,
@@ -504,12 +504,12 @@ func Test_card_RankDifference(t *testing.T) {
 			name: "10C should not be equal to 10H",
 			fields: fields{
 				rank: Rank("10"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
 			args: args{
 				card2: &card{
 					rank: "10",
-					suit: 'H',
+					suit: "H",
 				},
 			},
 			want: 0,
@@ -518,12 +518,12 @@ func Test_card_RankDifference(t *testing.T) {
 			name: "1C should be equal to 10C",
 			fields: fields{
 				rank: Rank("1"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
 			args: args{
 				card2: &card{
 					rank: "10",
-					suit: 'C',
+					suit: "C",
 				},
 			},
 			want: -9,
@@ -556,7 +556,7 @@ func Test_card_String(t *testing.T) {
 			name: "equal",
 			fields: fields{
 				rank: Rank("10"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
 			want: "10C",
 		},
@@ -564,7 +564,7 @@ func Test_card_String(t *testing.T) {
 			name: "not equal",
 			fields: fields{
 				rank: Rank("1"),
-				suit: Suit('C'),
+				suit: Suit("C"),
 			},
 			want: "1C",
 		},

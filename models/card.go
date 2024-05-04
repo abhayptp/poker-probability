@@ -4,7 +4,7 @@ import "errors"
 
 type Rank string
 
-type Suit rune
+type Suit string
 
 var rankOrder = map[Rank]int{
 	"1":  1,
@@ -23,7 +23,7 @@ var rankOrder = map[Rank]int{
 	"A":  14,
 }
 
-var suitValues = [4]Suit{'S', 'H', 'D', 'C'}
+var suitValues = [4]Suit{"S", "H", "D", "C"}
 
 var _ Card = &card{}
 
