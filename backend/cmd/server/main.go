@@ -59,7 +59,7 @@ type GetProbabilityResponse struct {
 func getProbabilityHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	// Log the request
-	log.Printf("Received request: %s %s", r.Method, r.URL.Path)
+	log.Printf("Received request: %s %s", r.Method, r.URL.Path, r.Body)
 
 	var request GetProbabilityRequest
 	err := decoder.Decode(&request)
@@ -78,11 +78,6 @@ func getProbabilityHandler(w http.ResponseWriter, r *http.Request) {
 		pCards = append(pCards, models.NewDealtCards(cardList...))
 	}
 	cardList := AdaptToModelsCardList(request.CommunityCards.Cards)
-	if err != nil {
-		log.Printf("Error adapting card list: %s", err.Error())
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
 	cCards := models.NewCommunityCards(cardList...)
 	strategy := strategy.NewApproximate(
 		cCards, pCards, request.PlayersCount, request.SimulationRounds, 5,
@@ -116,8 +111,23 @@ func getProbabilityHandler(w http.ResponseWriter, r *http.Request) {
 
 func router() *mux.Router {
 	r := mux.NewRouter()
-	r.HandleFunc("/get_probability", getProbabilityHandler).Methods("GET")
+	r.Use(enableCors) // Add this line to enable CORS
+	r.HandleFunc("/get_probability", getProbabilityHandler)
 	return r
+}
+
+func enableCors(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin,access-control-allow-headers")
+		// If this is a preflight request, we only need to return the headers above and an OK status
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }
 
 func main() {
