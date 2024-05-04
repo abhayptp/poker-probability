@@ -20,15 +20,15 @@ func TestNewCommunityCards(t *testing.T) {
 				cards: []Card{
 					&card{
 						rank: "10",
-						suit: 'H',
+						suit: "H",
 					},
 					&card{
 						rank: "A",
-						suit: 'C',
+						suit: "C",
 					},
 					&card{
 						rank: "1",
-						suit: 'D',
+						suit: "D",
 					},
 				},
 			},
@@ -36,15 +36,15 @@ func TestNewCommunityCards(t *testing.T) {
 				openedCards: []Card{
 					&card{
 						rank: "10",
-						suit: 'H',
+						suit: "H",
 					},
 					&card{
 						rank: "A",
-						suit: 'C',
+						suit: "C",
 					},
 					&card{
 						rank: "1",
-						suit: 'D',
+						suit: "D",
 					},
 				},
 			},
@@ -75,30 +75,30 @@ func Test_communityCards_GetOpenedCards(t *testing.T) {
 				openedCards: []Card{
 					&card{
 						rank: "10",
-						suit: 'H',
+						suit: "H",
 					},
 					&card{
 						rank: "A",
-						suit: 'C',
+						suit: "C",
 					},
 					&card{
 						rank: "1",
-						suit: 'D',
+						suit: "D",
 					},
 				},
 			},
 			want: []Card{
 				&card{
 					rank: "10",
-					suit: 'H',
+					suit: "H",
 				},
 				&card{
 					rank: "A",
-					suit: 'C',
+					suit: "C",
 				},
 				&card{
 					rank: "1",
-					suit: 'D',
+					suit: "D",
 				},
 			},
 		},
@@ -132,36 +132,36 @@ func Test_communityCards_GetUnopenedCards(t *testing.T) {
 				openedCards: []Card{
 					&card{
 						rank: "10",
-						suit: 'H',
+						suit: "H",
 					},
 					&card{
 						rank: "A",
-						suit: 'C',
+						suit: "C",
 					},
 					&card{
 						rank: "1",
-						suit: 'D',
+						suit: "D",
 					},
 				},
 				unopenedCards: []Card{
 					&card{
 						rank: "2",
-						suit: 'H',
+						suit: "H",
 					},
 					&card{
 						rank: "5",
-						suit: 'D',
+						suit: "D",
 					},
 				},
 			},
 			want: []Card{
 				&card{
 					rank: "2",
-					suit: 'H',
+					suit: "H",
 				},
 				&card{
 					rank: "5",
-					suit: 'D',
+					suit: "D",
 				},
 			},
 		},
@@ -199,25 +199,25 @@ func Test_communityCards_SetUnopenedCards(t *testing.T) {
 				openedCards: []Card{
 					&card{
 						rank: "10",
-						suit: 'H',
+						suit: "H",
 					},
 					&card{
 						rank: "A",
-						suit: 'C',
+						suit: "C",
 					},
 					&card{
 						rank: "1",
-						suit: 'D',
+						suit: "D",
 					},
 				},
 				unopenedCards: []Card{
 					&card{
 						rank: "2",
-						suit: 'H',
+						suit: "H",
 					},
 					&card{
 						rank: "5",
-						suit: 'D',
+						suit: "D",
 					},
 				},
 			},
@@ -225,11 +225,11 @@ func Test_communityCards_SetUnopenedCards(t *testing.T) {
 				[]Card{
 					&card{
 						rank: "2",
-						suit: 'H',
+						suit: "H",
 					},
 					&card{
 						rank: "5",
-						suit: 'D',
+						suit: "D",
 					},
 				},
 			},
@@ -237,25 +237,25 @@ func Test_communityCards_SetUnopenedCards(t *testing.T) {
 				openedCards: []Card{
 					&card{
 						rank: "10",
-						suit: 'H',
+						suit: "H",
 					},
 					&card{
 						rank: "A",
-						suit: 'C',
+						suit: "C",
 					},
 					&card{
 						rank: "1",
-						suit: 'D',
+						suit: "D",
 					},
 				},
 				unopenedCards: []Card{
 					&card{
 						rank: "2",
-						suit: 'H',
+						suit: "H",
 					},
 					&card{
 						rank: "5",
-						suit: 'D',
+						suit: "D",
 					},
 				},
 			},
